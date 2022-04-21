@@ -59,4 +59,17 @@ function showTurns() {
     }, 800);
 }
 
-module.exports = { game, newGame, showScore, addTurn, lightsOn, showTurns };
+function playerTurn() {
+    // get the index of the last element from the playerMoves and compare with the same index of the current game array.  If the player gets the answer correct, they should match.
+    let i = game.playerMoves.length - 1;
+    if(game.currentGame[i] === game.playerMoves[i]) {
+        // if the currentGame length and playerMoves length match we must be at the end of the game
+        if (game.currentGame.length == game.playerMoves.length) {
+            // increment the score
+            game.score++;
+            showScore();
+            addTurn();
+        }
+    }
+}
+module.exports = { game, newGame, showScore, addTurn, lightsOn, showTurns, playerTurn };
