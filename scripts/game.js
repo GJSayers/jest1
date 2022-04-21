@@ -3,6 +3,8 @@ let game = {
     playerMoves: [],
     score: 0,
     turnNumber: 0,
+    turnInProgress: false,
+    lastButton: "",
     choices: ["button1", "button2", "button3", "button4"]
 };
 
@@ -13,13 +15,16 @@ function newGame() {
     for (let circle of document.getElementsByClassName("circle")) {
         if(circle.getAttribute("data-listener") !== "true") {
             circle.addEventListener("click", (e) => {
-                // get our click target id and store in move
-                let move = e.target.getAttribute("id");
-                // pass move into lightsOn call to illuminate correct circle
-                lightsOn(move);
-                // push move into game player moves
-                game.playerMoves.push(move);
-                playerTurn();
+                if (game.currentGame.length > 0 && !game.turnInProgress) {
+                    // get our click target id and store in move
+                    let move = e.target.getAttribute("id");
+                    game.lastbutton = move;
+                    // pass move into lightsOn call to illuminate correct circle
+                    lightsOn(move);
+                    // push move into game player moves
+                    game.playerMoves.push(move);
+                    playerTurn();
+                }
             });
             circle.setAttribute("data-listener", "true");
         }
@@ -48,12 +53,14 @@ function lightsOn(circ) {
 }
 
 function showTurns() {
+    game.turnInProgress = true;
     game.turnNumber = 0;
     let turns = setInterval(function () {
         lightsOn(game.currentGame[game.turnNumber]);
         game.turnNumber++;
-        if (game.turnNumber++ >= game.currentGame.length) {
+        if (game.turnNumber >= game.currentGame.length) {
             clearInterval(turns);
+            game.turnInProgress = false;
         }
 
     }, 800);
@@ -70,6 +77,9 @@ function playerTurn() {
             showScore();
             addTurn();
         }
+    } else {
+        alert("Wrong move!");
+        newGame();
     }
 }
 module.exports = { game, newGame, showScore, addTurn, lightsOn, showTurns, playerTurn };
